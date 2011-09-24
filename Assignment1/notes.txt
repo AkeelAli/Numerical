@@ -1,0 +1,14 @@
+1) Solve for for L and U according to slide LU5
+QUESTION: since we know L = L_transpose, do we use a faster algorithm, possibly one from the next slides (with pivot and all)?
+
+2) Solve for y in Ly=B. Since L is a triangular matrix, you start by getting y_i of the row that only has one L entry, then move up to get all the other ys.
+
+[ L L L ][ y ] = [ b ]
+[ 0 L L ][ y ] = [ b ]
+[ 0 0 L ][ y ] = [ b ] < = Start here
+
+See slides for exact formula for each y_i
+
+3) Now that you have y, you can find x in Ux=y.
+
+See slides for exact formula for each x_i
