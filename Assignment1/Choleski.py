@@ -71,7 +71,7 @@ class Matrix:
 	
 	#returns the self's transpose as a Matrix
 	def transpose(self):
-		result=Matrix(i=self.rows,j=self.columns)
+		result=Matrix(i=self.columns,j=self.rows)
 		
 		for j in range(1, self.columns+1):
 			for i in range(1, self.rows+1):
@@ -249,4 +249,4 @@ def runCholeskiTests():
 
 
 	
-runCholeskiTests()
+#runCholeskiTests()
