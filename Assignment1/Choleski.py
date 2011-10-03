@@ -1,3 +1,6 @@
+import math
+import copy
+
 class MatrixElement:
 	
 	def __init__(self,row,column,value):
@@ -46,6 +49,36 @@ class Matrix:
 				for j,value in enumerate(list):
 					self.elements[str(i+1)+","+str(j+1)]=MatrixElement(i+1,j+1,value)
 	
+	#returns Matrix product of self with passed multiplier Matrix
+	def multiply(self,multiplier):
+		#return None if inner dimensions don't match
+		if (self.columns!=multiplier.rows):
+			return None
+		
+		innerDimension=self.columns
+		
+		result=Matrix(i=self.rows,j=multiplier.columns)
+		
+		for j in range(1, multiplier.columns+1):
+			for i in range(1, self.rows+1):
+				sum=0
+				for k in range(1, innerDimension+1):
+					sum+=self.get(i,k)*multiplier.get(k,j)
+				
+				result.set(i,j,sum)
+
+		return result
+	
+	#returns the self's transpose as a Matrix
+	def transpose(self):
+		result=Matrix(i=self.rows,j=self.columns)
+		
+		for j in range(1, self.columns+1):
+			for i in range(1, self.rows+1):
+				result.set(j,i,self.get(i,j))
+				
+		return result
+	
 	def get(self,i,j):
 		return self.elements[str(i)+","+str(j)].value
 		
@@ -79,7 +112,11 @@ class Matrix:
 			string+="\n"
 		return string % tuple(string_values)
 
+#Solves and prints x in Ax=b given matrices A and b
 def Choleski(A,b):
+	originalA=copy.deepcopy(A)
+	originalb=copy.deepcopy(b)
+	
 	n=A.rows
 	
 	#checks to see that A is square, and b matches A
@@ -107,7 +144,7 @@ def Choleski(A,b):
 				A.set(i,k,A.get(i,k)-(A.get(i,j)*A.get(k,j)))
 				
 	#BACK SUBSTITUTION
-	x=Matrix(i=n,j=1)
+	x=Matrix(i=n,j=1) #create empty matrix of specified dimensions
 	
 	#counting backwards starting from n
 	for i in range(n,0,-1):
@@ -117,32 +154,99 @@ def Choleski(A,b):
 			sum+=A.get(j,i)*x.get(j,1)
 		
 		x.set(i,1,(b.get(i,1)-sum)/A.get(i,i))
-		
-	print "x = "
+	
+	# print "=============================================="
+	# print "START Choleski Function Output						"
+	# print "=============================================="
+	# print ""
+	# print "Given:"
+	# print "-------------------------"
+	# print "A ="
+	# print originalA
+	# print "b ="
+	# print originalb
+	print ""
+	print "-------------------------"
+	print "Solution"
+	print "-------------------------"
+	print "x ="
+	print x
+	# print "=============================================="
+	# print "END Choleski Function Output						"
+	# print "=============================================="
+	print ""
+
+#takes lower matrix L, generates real, symmetric and positive definite A (A=LL_T)
+#gets b by multiplying x by A (b=Ax)
+#calls Choleski and prints expected vs obtained results
+#CONDITION: x must be vector of length=rows of lower matrix L
+def testCholeski(L,x):
+	L_T=L.transpose()	
+	A=L.multiply(L_T)
+
+	#assertion to ensure that A and x can be multipled (Ax=b)
+	assert A.columns==x.rows
+	
+	b=A.multiply(x)
+
+	print "-------------------------"
+	print "Expected Solution"
+	print "-------------------------"
+	print "x ="
 	print x
 
-import math
+	#call Choleski
+	Choleski(A,b)			
+				
+	#At the output of a Choleski execution, A contains L and b contains y			
+	# print "L = "
+	# print A
 
-A=Matrix([	[2,-1,0],
-			[-1,2,-1],
-			[0,-1,2]
-		])
+	# print "y = "
+	# print b	
 
-		
-b=Matrix([	[1],
-			[-1],
-			[7]
-		])
-		
+#runs tests to ensure proper functioning of choleski fcn
+#For assignment 1, Problem 1, part (b) and (c)	
+def runCholeskiTests():
+	L=Matrix([	[2, 0],
+				[4, 3]
+			])
 
-Choleski(A,b)			
-			
+	x=Matrix([	[3],
+				[23]
+			])	
 
-print "L = "
-print A
+	#x must be vector of length=rows of lower matrix L
+	testCholeski(L,x)
 
-print "y = "
-print b	
+	L=Matrix([	[-3, 0, 0],
+				[3, 23, 0],
+				[67, -89, 10]
+			])
 
-		
+	x=Matrix([	[20],
+				[-45],
+				[46]
+			])	
 
+	#x must be vector of length=rows of lower matrix L
+	testCholeski(L,x)
+
+	L=Matrix([	[345.56, 0, 0, 0],
+				[34, -423.5539, 0, 0],
+				[2958.478, -2474.8, 10, 0],
+				[123.495, 123.039, 9340.0, -2349.3]
+			])
+
+	x=Matrix([	[3746895.92783],
+				[-4774975.8368],
+				[29649030.764993],
+				[9793479.3469802]
+			])	
+
+	#x must be vector of length=rows of lower matrix L
+	testCholeski(L,x)		
+
+
+	
+runCholeskiTests()
