@@ -79,6 +79,18 @@ class Matrix:
 				
 		return result
 	
+	def subtract(self,subtrahend):
+		if (self.rows!=subtrahend.rows or self.columns!=subtrahend.columns):
+			return None
+		
+		result=Matrix(i=self.rows,j=self.columns)
+		
+		for j in range(1, self.columns+1):
+			for i in range(1, self.rows+1):
+				result.set(i,j,self.get(i,j)-subtrahend.get(i,j))
+				
+		return result
+
 	def get(self,i,j):
 		return self.elements[str(i)+","+str(j)].value
 		
@@ -127,7 +139,9 @@ def Choleski(A,b):
 	
 	#ELIMINATION
 	for j in range(1,n+1):
-		if (A.get(j,j)<=0): return -1
+		if (A.get(j,j)<=0): 
+			print "Choleski Error: Passed A is not real, symmetric or positive definite"
+			return -1
 		
 		A.set(j,j,math.sqrt(A.get(j,j)))
 		b.set(j,1,b.get(j,1)/A.get(j,j))
@@ -175,6 +189,7 @@ def Choleski(A,b):
 	# print "END Choleski Function Output						"
 	# print "=============================================="
 	print ""
+
 
 #takes lower matrix L, generates real, symmetric and positive definite A (A=LL_T)
 #gets b by multiplying x by A (b=Ax)
