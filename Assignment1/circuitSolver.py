@@ -3,7 +3,8 @@ from Choleski import Matrix, Choleski
 #makes the appropriate call to the Choleski method given 
 #the incidence matrix A, matrix Y, E and J
 def solveCircuit(A,Y,E,J):
-	Choleski(A.multiply(Y).multiply(A.transpose()),A.multiply(J.subtract(Y.multiply(E))))
+	elapsedTime=Choleski(A.multiply(Y).multiply(A.transpose()),A.multiply(J.subtract(Y.multiply(E))))
+	print "Time Taken: "+ str(elapsedTime)
 
 def buildMatrices(filename):
 	global Y, E, J, A

@@ -1,5 +1,6 @@
 import math
 import copy
+from time import clock
 
 class MatrixElement:
 	
@@ -137,6 +138,8 @@ def Choleski(A,b):
 	
 	#TODO checks to see if A is symmetric?
 	
+	startTime=clock()
+	
 	#ELIMINATION
 	for j in range(1,n+1):
 		if (A.get(j,j)<=0): 
@@ -169,6 +172,8 @@ def Choleski(A,b):
 		
 		x.set(i,1,(b.get(i,1)-sum)/A.get(i,i))
 	
+	elapsedTime=clock()-startTime
+	
 	# print "=============================================="
 	# print "START Choleski Function Output						"
 	# print "=============================================="
@@ -189,6 +194,8 @@ def Choleski(A,b):
 	# print "END Choleski Function Output						"
 	# print "=============================================="
 	print ""
+	
+	return elapsedTime
 
 
 #takes lower matrix L, generates real, symmetric and positive definite A (A=LL_T)
