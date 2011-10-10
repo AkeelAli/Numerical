@@ -126,7 +126,11 @@ class Matrix:
 		return string % tuple(string_values)
 
 #Solves and prints x in Ax=b given matrices A and b
-def Choleski(A,b):
+def Choleski(A,b,halfBandwidth=None):
+	#if no halfBandwidth is provided, then it equals columns=rows
+	if (halfBandwidth is None):
+		halfBandwidth=A.columns
+		
 	originalA=copy.deepcopy(A)
 	originalb=copy.deepcopy(b)
 	
@@ -153,7 +157,7 @@ def Choleski(A,b):
 		for i in range(1,j):
 			A.set(i,j,0)
 		
-		for i in range(j+1,n+1):
+		for i in range(j+1,halfBandwidth+1):
 			A.set(i,j,A.get(i,j)/A.get(j,j))
 			b.set(i,1,b.get(i,1)-(A.get(i,j)*b.get(j,1)))
 			
@@ -167,7 +171,7 @@ def Choleski(A,b):
 	for i in range(n,0,-1):
 		#compute the summation
 		sum=0
-		for j in range(i+1,n+1):
+		for j in range(i+1,halfBandwidth+1):
 			sum+=A.get(j,i)*x.get(j,1)
 		
 		x.set(i,1,(b.get(i,1)-sum)/A.get(i,i))
@@ -184,7 +188,7 @@ def Choleski(A,b):
 	# print originalA
 	# print "b ="
 	# print originalb
-	print ""
+	# print ""
 	print "-------------------------"
 	print "Solution"
 	print "-------------------------"
@@ -197,6 +201,23 @@ def Choleski(A,b):
 	
 	return elapsedTime
 
+#gets the half bandwidth of a symmetric matrix A
+#assumes A symmetric
+def getHalfBandwidth(A):
+	if (A.rows!=A.columns):
+		print "Matrix provided to getHalfBandwidth is not symmetric"
+		return -1
+		
+	hb=0
+	for i in range(1,A.rows+1):
+		for j in range(1,i+1):
+			if (A.get(i,j)!=0):
+				#set hb=max(hb,i-j+1)
+				if (hb < (i-j+1)):
+					hb=(i-j+1)
+					break;
+					
+	return hb
 
 #takes lower matrix L, generates real, symmetric and positive definite A (A=LL_T)
 #gets b by multiplying x by A (b=Ax)
@@ -270,5 +291,4 @@ def runCholeskiTests():
 	testCholeski(L,x)		
 
 
-	
 #runCholeskiTests()

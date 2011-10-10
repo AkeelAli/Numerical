@@ -1,9 +1,11 @@
-from Choleski import Matrix, Choleski
+from Choleski import Matrix, Choleski, getHalfBandwidth
 
 #makes the appropriate call to the Choleski method given 
 #the incidence matrix A, matrix Y, E and J
 def solveCircuit(A,Y,E,J):
-	elapsedTime=Choleski(A.multiply(Y).multiply(A.transpose()),A.multiply(J.subtract(Y.multiply(E))))
+	Choleski_A=A.multiply(Y).multiply(A.transpose())
+	
+	elapsedTime=Choleski(Choleski_A,A.multiply(J.subtract(Y.multiply(E))),getHalfBandwidth(Choleski_A))
 	print "Time Taken: "+ str(elapsedTime)
 
 def buildMatrices(filename):
