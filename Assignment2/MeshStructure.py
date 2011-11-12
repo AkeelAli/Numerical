@@ -1,6 +1,7 @@
 #3 data structures for Problem 2 (a)
 nodeH = {}
 triangleH = {}
+triangleL = []
 pList = []
 
 
@@ -56,12 +57,14 @@ def buildStructs(filename):
 		nodeNum3 = int(m.group(3))
 
 		#Store each triangle 6 times in the hash (3*2*1) for ease of access:(x,yz) or (x,z,y) or (y,x,z) etc.
-		for j in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
-			for k in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
-				for w in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
-					if (not (j == k or j == w or k == w)):
-						triangleH["("+j+","+k+","+w+")"] = \
-							Triangle(nodeH[nodeNum1],nodeH[nodeNum2],nodeH[nodeNum3])
+		# for j in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
+			# for k in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
+				# for w in (str(nodeNum1),str(nodeNum2),str(nodeNum3)):
+					# if (not (j == k or j == w or k == w)):
+						# triangleH["("+j+","+k+","+w+")"] = \
+							# Triangle(nodeH[nodeNum1],nodeH[nodeNum2],nodeH[nodeNum3])
+							
+		triangleL.append(Triangle(nodeH[nodeNum1],nodeH[nodeNum2],nodeH[nodeNum3]))
 	
 
 	# Read in boundary conditions #

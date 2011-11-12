@@ -91,6 +91,18 @@ class Matrix:
 				result.set(i,j,self.get(i,j)-subtrahend.get(i,j))
 				
 		return result
+		
+	def add(self,addend):
+		if (self.rows!=addend.rows or self.columns!=addend.columns):
+			return None
+		
+		result=Matrix(i=self.rows,j=self.columns)
+		
+		for j in range(1, self.columns+1):
+			for i in range(1, self.rows+1):
+				result.set(i,j,self.get(i,j)+addend.get(i,j))
+				
+		return result
 
 	def get(self,i,j):
 		return self.elements[str(i)+","+str(j)].value
