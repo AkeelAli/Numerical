@@ -61,12 +61,17 @@ class Matrix:
 		result=Matrix(i=self.rows,j=multiplier.columns)
 		
 		for j in range(1, multiplier.columns+1):
+			print "			#column "+str(j)+" / "+ str(multiplier.columns)
 			for i in range(1, self.rows+1):
 				sum=0
 				for k in range(1, innerDimension+1):
-					sum+=self.get(i,k)*multiplier.get(k,j)
+					#optimization techniques in action here
+					a = self.elements[str(i)+","+str(k)].value
+					b = multiplier.elements[str(k)+","+str(j)].value
+					if ((a != 0) and (b != 0)):
+						sum+=a*b
 				
-				result.set(i,j,sum)
+				result.elements[str(i)+","+str(j)].value=sum
 
 		return result
 	

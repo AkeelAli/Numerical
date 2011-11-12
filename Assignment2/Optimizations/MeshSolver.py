@@ -1,7 +1,7 @@
 from Matrix import Matrix
 import MeshStructure
 import math
-from Choleski import Choleski
+#from Choleski import Choleski
 
 S_g = 0
 S_ff = 0
@@ -117,12 +117,14 @@ def buildGlobal_S(nodeH, triangleL, pList):
 	global U_p
 	global U_con_order
 	#populate global S with zeroes
+	print "#populate global S with zeroes"
 	S_g = Matrix(i=(len(triangleL)*3),j=(len(triangleL)*3))
 	for i in range(1,S_g.rows+1):
 		for j in range(1,S_g.columns+1):
 			S_g.set(i,j,0)
 	
 	#build local S for each triangle and place it in global S
+	print "#build local S for each triangle and place it in global S"
 	i = 1 #index where we'll be placing the local S into global S
 	j = 1
 	for k in range(0,len(triangleL)):
@@ -145,6 +147,7 @@ def buildGlobal_S(nodeH, triangleL, pList):
 		nodeID[id(nodeH[i])] = nodeH[i]
 	
 	#build U disjoint with node ids (rather than voltages)
+	print "#build U disjoint with node ids (rather than voltages)"
 	U_dis = Matrix(i=(len(triangleL)*3),j=1)
 	row = 1
 	for k in range(0,len(triangleL)):
@@ -154,7 +157,8 @@ def buildGlobal_S(nodeH, triangleL, pList):
 		row+=3
 		
 	
-	#build U conjoint with node ids (and build C along the way) 
+	#build U conjoint with node ids (and build C along the way)
+	print "#build U conjoint with node ids (and build C along the way)"
 	C = Matrix(i=U_dis.rows,j=len(nodeH))
 	row_C = 1
 	U_con = Matrix(i=len(nodeH),j=1)
@@ -178,6 +182,7 @@ def buildGlobal_S(nodeH, triangleL, pList):
 			row_C+=1
 	
 	#rearrange	U_con and C (to put free up, and predefined down)
+	print "#rearrange	U_con and C (to put free up, and predefined down)"
 	#method used is 2 pointers moving in opposite directions on U_con
 	#the pointer moving up looks for a free node, and the pointer moving down looks for predef node
 	#swap both, stop process when cross
@@ -212,6 +217,7 @@ def buildGlobal_S(nodeH, triangleL, pList):
 		U_con.set(i,1,nodeID[U_con.get(i,1)].voltage)
 	
 	#build U_p and U_f
+	print "#build U_p and U_f"
 	U_f = Matrix(i=down-1,j=1)
 	U_p = Matrix(i=U_con.rows-U_f.rows,j=1)
 	for i in range(1,U_f.rows+1):
@@ -220,7 +226,13 @@ def buildGlobal_S(nodeH, triangleL, pList):
 		U_p.set(i,1,U_con.get(i+down-1,1))
 	
 	#finally compute S_g
-	S_g = (C.transpose().multiply(S_g)).multiply(C)
+	print "#finally compute S_g"
+	print "		#transpose C"
+	C_T = C.transpose()
+	print "		#multiply C transpose by S_g"
+	S_g = (C_T.multiply(S_g))
+	print "		#multiply result by C"
+	S_g = S_g.multiply(C)
 
 def reduced():
 	global S_ff
@@ -257,13 +269,29 @@ def printResults(nodeH,pList,filename):
 #buildGlobal_S([t1,t2])
 #MeshStructure.buildStructs('squareCoax3_D.msh')
 import sys
+import pickle
+	
+
+
+
 if (len(sys.argv) > 1):
 	filename = sys.argv[1]
+	print "--------------------------------"
+	print "Creating A, b for File "+filename+".msh"
+	print "--------------------------------"
 	MeshStructure.buildStructs(filename+".msh")
 	buildGlobal_S(MeshStructure.nodeH, MeshStructure.triangleL, MeshStructure.pList)
 	reduced()
-	U_f = Choleski(S_ff,S_fp.multiply(U_p))
-	printResults(MeshStructure.nodeH,MeshStructure.pList,filename+".csv")
+	A = S_ff
+	b = S_fp.multiply(U_p)
+	
+	#dump data	
+	fd = open(filename+".dump",'w')
+	data = [A,b,MeshStructure.nodeH,MeshStructure.pList,U_con_order]
+	pickle.dump(data,fd)
+	fd.close()
+	
+	#printResults(MeshStructure.nodeH,MeshStructure.pList,filename+".csv")
 else:
 	print "please specify a filename without extension"
 
