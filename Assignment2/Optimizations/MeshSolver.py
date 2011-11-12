@@ -117,11 +117,8 @@ def buildGlobal_S(nodeH, triangleL, pList):
 	global U_p
 	global U_con_order
 	#populate global S with zeroes
-	print "#populate global S with zeroes"
+	print "#create global S with zeroes"
 	S_g = Matrix(i=(len(triangleL)*3),j=(len(triangleL)*3))
-	for i in range(1,S_g.rows+1):
-		for j in range(1,S_g.columns+1):
-			S_g.set(i,j,0)
 	
 	#build local S for each triangle and place it in global S
 	print "#build local S for each triangle and place it in global S"
