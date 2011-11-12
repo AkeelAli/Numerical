@@ -67,17 +67,18 @@ def Choleski(A,b,halfBandwidth=None):
 	# print "b ="
 	# print originalb
 	# print ""
-	print "-------------------------"
-	print "Solution"
-	print "-------------------------"
-	print "x ="
-	print x
+	# print "-------------------------"
+	# print "Solution"
+	# print "-------------------------"
+	# print "x ="
+	# print x
 	# print "=============================================="
 	# print "END Choleski Function Output						"
 	# print "=============================================="
 	print ""
 	
-	return elapsedTime
+	return x
+	#return elapsedTime
 
 #gets the half bandwidth of a symmetric matrix A
 #assumes A symmetric
