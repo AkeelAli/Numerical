@@ -147,7 +147,7 @@ class Matrix:
 				
 				#negative numbers have one extra dash character (-)
 				#less one decimal place for -ve numbers to keep alignment
-				value=self.elements[str(i)+","+str(j)].value
+				value=self.get(i,j)
 				if (value>=0):
 					string+="%.5f"
 				else:
