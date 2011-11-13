@@ -32,7 +32,7 @@ class Matrix:
 				r=[]
 				#create a row list
 				for j in range(1,self.columns+1):
-					r.append(MatrixElement(i,j,0))
+					r.append(None)
 				#add it to elements
 				self.elements.append(r)
 			
@@ -73,12 +73,12 @@ class Matrix:
 				sum=0
 				for k in range(1, innerDimension+1):
 					#optimization techniques in action here
-					a = self.elements[i][k-1].value
-					b = multiplier.elements[k][j-1].value
-					if ((a != 0) and (b != 0)):
-						sum+=a*b
+					a = self.elements[i][k-1]
+					b = multiplier.elements[k][j-1]
+					if ((not a is None) and (not b is None)):
+						sum+=a.value*b.value
 				
-				result.elements[i][j-1].value=sum
+				result.set(i,j,sum)
 
 		return result
 	
@@ -117,10 +117,18 @@ class Matrix:
 		return result
 
 	def get(self,i,j):
-		return self.elements[i][j-1].value
+		if (self.elements[i][j-1] is None):
+			return 0
+		else:
+			return self.elements[i][j-1].value
 		
 	def set(self,i,j,value):
-		self.elements[i][j-1].value=value
+		if (value==0):
+			self.elements[i][j-1] = None
+		elif (self.elements[i][j-1] is None):
+			self.elements[i][j-1]=MatrixElement(i,j,value)
+		else:
+			self.elements[i][j-1].value=value
 	
 	#sets all values to 0
 	def clear(self):
