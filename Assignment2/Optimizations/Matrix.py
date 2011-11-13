@@ -10,7 +10,7 @@ class MatrixElement:
 		self.j=column
 	
 	def __repr__(self):
-		return "("+str(self.i)+","+str(self.j)+")="+str(self.v)
+		return "("+str(self.i)+","+str(self.j)+")="+str(self.value)
 	
 	
 class Matrix:
@@ -19,7 +19,7 @@ class Matrix:
 	#1) sending a list of lists of values
 	#2) sending i and j to build an empty matrix of size i,j
 	def __init__(self,listOfLists=None,i=None,j=None):
-		self.elements={}
+		self.elements=[[]]
 		self.rows=None
 		self.columns=None
 	
@@ -27,9 +27,14 @@ class Matrix:
 			self.rows=i
 			self.columns=j
 			
-			for j in range(1,self.columns+1):
-				for i in range(1,self.rows+1):
-					self.elements[str(i)+","+str(j)]=MatrixElement(i,j,0)
+			#add as many row lists as there are rows
+			for i in range(1,self.rows+1):
+				r=[]
+				#create a row list
+				for j in range(1,self.columns+1):
+					r.append(MatrixElement(i,j,0))
+				#add it to elements
+				self.elements.append(r)
 			
 		elif (not listOfLists is None):
 			#TODO assert that listOfLists is a list
@@ -44,11 +49,13 @@ class Matrix:
 					self.columns=len(listOfLists[i])
 				else:
 					assert len(listOfLists[i])==self.columns
-				
+			
 			#create the matrix elements
 			for i,list in enumerate(listOfLists):
+				r=[]
 				for j,value in enumerate(list):
-					self.elements[str(i+1)+","+str(j+1)]=MatrixElement(i+1,j+1,value)
+					r.append(MatrixElement(i,j,value))
+				self.elements.append(r)
 	
 	#returns Matrix product of self with passed multiplier Matrix
 	def multiply(self,multiplier):
@@ -66,12 +73,12 @@ class Matrix:
 				sum=0
 				for k in range(1, innerDimension+1):
 					#optimization techniques in action here
-					a = self.elements[str(i)+","+str(k)].value
-					b = multiplier.elements[str(k)+","+str(j)].value
+					a = self.elements[i][k-1].value
+					b = multiplier.elements[k][j-1].value
 					if ((a != 0) and (b != 0)):
 						sum+=a*b
 				
-				result.elements[str(i)+","+str(j)].value=sum
+				result.elements[i][j-1].value=sum
 
 		return result
 	
@@ -110,10 +117,10 @@ class Matrix:
 		return result
 
 	def get(self,i,j):
-		return self.elements[str(i)+","+str(j)].value
+		return self.elements[i][j-1].value
 		
 	def set(self,i,j,value):
-		self.elements[str(i)+","+str(j)].value=value
+		self.elements[i][j-1].value=value
 	
 	#sets all values to 0
 	def clear(self):
