@@ -2,10 +2,11 @@
 #include <stdlib.h>
 
 #define NR_LIMIT 0.0000000001 /* run algorithm until |f/f(0)| < 10^-6 */
+#define SUB_LIMIT 0.0000000001
 #define INIT_GUESS 0.0 /* starting with zero flux */
 #define PI 3.141592654
 
-#define PRINT
+#define SUB
 
 /* global table holding the BH function from table 1 in the assignment */
 double BH_table[][2] = { {0.0, 0.0}, {0.2, 14.7}, {0.4, 36.5}, {0.6, 71.7},
@@ -16,17 +17,49 @@ double BH_table[][2] = { {0.0, 0.0}, {0.2, 14.7}, {0.4, 36.5}, {0.6, 71.7},
 #define B_SIZE sizeof(BH_table)/sizeof(BH_table[0])
 
 double solveNR(double init_flux);
+double solveSub(double init_flux);
 
 int main(void){
-#ifdef PRINT
+#ifdef PRINT_NR
 	printf("%4s,%15s,%15s,%15s,%15s\n","itr","flux","f","f'","residue");
-#endif
 	solveNR(INIT_GUESS);
+#endif
 	
+#ifdef SUB
+	printf("%4s,%15s,%15s\n","itr","flux","f");
+	solveSub(INIT_GUESS);
+#endif
+
 	return 0;
 }
 
 double getH(double flux);
+
+/**
+	Solves the non linear equation of the form f(flux) = 0
+	using successive substitution
+*/
+double solveSub(double init_flux){
+	double flux = init_flux;
+	double expr = 125000000 / PI; /* expression appearing twice in eqn */
+	
+	double f, residue;
+	int iteration = 0;
+	
+	do{
+		f = ((0.3 * getH(flux)) + (expr * flux) - 8000);
+
+		printf("%4d, %15e, %15e\n",iteration,flux,f);
+
+		iteration++;
+		flux = flux - f;
+	
+		residue = f < 0 ? -f:f;
+	}while(residue > SUB_LIMIT);
+	
+	return flux;
+}
+
 double slope(double flux);
 
 /**
@@ -45,7 +78,7 @@ double solveNR(double init_flux){
 		/* iteration k */
 		f = ((0.3 * getH(flux)) + (expr * flux) - 8000);
 		fprime = 3000 * slope(flux) + expr;
-#ifdef PRINT
+#ifdef PRINT_NR
 		printf("%4d,%15e, %15e, %15e, %15e\n",iteration,flux,f,fprime,residue);
 #endif
 		/* iteration k+1 */
