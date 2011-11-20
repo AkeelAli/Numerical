@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define NR_LIMIT 0.0000000001 
+#define NR_LIMIT pow(10,-10) 
 #define INIT_GUESS 0.0
 #define PI 3.141592654
 
@@ -50,7 +50,7 @@ void solveNR(double init_v1, double init_v2) {
 		fprime_inv[1][1] = 1/fprime_det * fprime[0][0];
 		
 		residue = (residue = (f[0]+f[1])/2) < 0 ? -residue:residue;
-		printf("%4d,%13e,%13e,%13e,%13e,%10e\n",iteration,v[0]-v[1],v[1],f[0],f[1],residue);
+		printf("%4d,%13f,%13f,%13e,%13e,%10e\n",iteration,v[0]-v[1],v[1],f[0],f[1],residue);
 
 		/* iteration k+1 */
 		iteration++; 				/* increment iteration for next loop */
