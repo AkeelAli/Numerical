@@ -41,7 +41,7 @@ double getH(double flux);
 */
 double solveSub(double init_flux){
 	double flux = init_flux;
-	double expr = 125000000 / PI; /* expression appearing twice in eqn */
+	double expr = 125000000 / PI;
 	
 	double f, residue;
 	int iteration = 0;
