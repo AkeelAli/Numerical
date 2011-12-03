@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define NR_LIMIT 0.0000000001 /* run algorithm until |f/f(0)| < 10^-6 */
 #define SUB_LIMIT 0.0000000001
@@ -43,18 +44,27 @@ double solveSub(double init_flux){
 	double flux = init_flux;
 	double expr = 125000000 / PI;
 	
-	double f, residue;
+	double f, f_prev, flux_prev, residue;
 	int iteration = 0;
+	f_prev = 0;
+	flux_prev = flux;
 	
 	do{
-		f = ((0.3 * getH(flux)) + (expr * flux) - 8000);
-
 		printf("%4d, %15e, %15e\n",iteration,flux,f);
 
-		iteration++;
+		f = ((0.3 * getH(flux)) + (expr * flux) - 8000);
+		
+		flux_prev = flux;
 		flux = flux - f;
+		
+		f = ((0.3 * getH(flux)) + (expr * flux) - 8000);
+		f_prev = ((0.3 * getH(flux_prev)) + (expr * flux_prev) - 8000);
+		
+		if (flux > flux_prev)
+			flux = flux_prev - (f_prev * flux/f);
 	
-		residue = f < 0 ? -f:f;
+		iteration++;
+		residue = fabs(flux - flux_prev);
 	}while(residue > SUB_LIMIT);
 	
 	return flux;
